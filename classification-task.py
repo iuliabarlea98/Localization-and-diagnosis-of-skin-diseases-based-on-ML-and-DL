@@ -90,14 +90,12 @@ df_6 = skin_df[skin_df['label'] == 6]
 
 
 
-#Now time to read images based on image ID from the CSV file
-#This is the safest way to read images as it ensures the right image is read for the right ID
+#read img 
 image_path = {os.path.splitext(os.path.basename(x))[0]: x
                      for x in glob(os.path.join('D:/ANUL4!!!!!!!!/PNI/HAM10000/incercare/HERE/', '*', '*.jpg'))}
 
-#Define the path and add as a new column
+# path added as a new column
 skin_df['path'] = skin_df['image_id'].map(image_path.get)
-#Use the path to read images.
 skin_df['image'] = skin_df['path'].map(lambda x: np.asarray(Image.open(x).resize((SIZE,SIZE))))
 
 
@@ -116,29 +114,21 @@ for n_axs, (type_name, type_rows) in zip(m_axs,
 X = np.asarray(skin_df['image'].tolist())
 X = X/255.  # Scale values to 0-1. You can also used standardscaler or other scaling methods.
 Y=skin_df['label']  #Assign label values to Y
-Y_cat = to_categorical(Y, num_classes=7) #Convert to categorical as this is a multiclass classification problem
+Y_cat = to_categorical(Y, num_classes=7) #Convert to categorical as this is a multiclass classification
 #Split to training and testing
 x_train, x_test, y_train, y_test = train_test_split(X, Y_cat, test_size=0.25, random_state=50)
 
 #Define the model.
-#I've used autokeras to find out the best model for this problem.
-#You can also load pretrained networks such as mobilenet or VGG16
-
 num_classes = 7
-
 model = Sequential()
-
-
 model.add(Conv2D(256 , (3, 3),activation='relu',padding = 'same', kernel_initializer = 'he_uniform',input_shape=(SIZE, SIZE, 3),kernel_regularizer=tf.keras.regularizers.l2(0.001)))
 model.add(BatchNormalization())
 model.add(MaxPool2D(pool_size=(2, 2)))  
 model.add(Dropout(0.2))
-
 model.add(Conv2D(128, (3, 3),activation='relu',padding = 'same', kernel_initializer = 'he_uniform',kernel_regularizer=tf.keras.regularizers.l2(0.001)))
 model.add(BatchNormalization())
 model.add(MaxPool2D(pool_size=(2, 2)))  
 model.add(Dropout(0.2))
-
 model.add(Conv2D(64, (3, 3),activation='relu',padding = 'same', kernel_initializer = 'he_uniform',kernel_regularizer=tf.keras.regularizers.l2(0.001)))
 model.add(BatchNormalization())
 model.add(MaxPool2D(pool_size=(2, 2)))  
@@ -155,7 +145,6 @@ model.compile(loss='categorical_crossentropy', optimizer=optimiser, metrics=['ac
 
 
 # Train
-#You can also use generator to use augmentation during training.
 
 batch_size = 32
 epochs = 55
@@ -198,12 +187,12 @@ plt.show()
 
 # Prediction on test data
 y_pred = model.predict(x_test)
-# Convert predictions classes to one hot vectors 
+#predictions classes to one hot vectors 
 y_pred_classes = np.argmax(y_pred, axis = 1) 
-# Convert test data to one hot vectors
+#test data to one hot vectors
 y_true = np.argmax(y_test, axis = 1) 
 
-#Print confusion matrix
+#confusion matrix
 cm = confusion_matrix(y_true, y_pred_classes)
 
 fig, ax = plt.subplots(figsize=(6,6))
@@ -211,7 +200,7 @@ sns.set(font_scale=1.6)
 sns.heatmap(cm, annot=True, linewidths=.5, ax=ax)
 
 
-#PLot fractional incorrect misclassifications
+# fractional incorrect misclassifications
 incorr_fraction = 1 - np.diag(cm) / np.sum(cm, axis=1)
 plt.figure()
 plt.bar(np.arange(7), incorr_fraction)

@@ -38,17 +38,17 @@ for image in os.listdir(img_path):  #iterate through each file
     # Gabor features(32)
     num = 1  #To count numbers up in order to give Gabor features a lable in the data frame
     kernels = []
-    for theta in (0,1):   #Define number of thetas
+    for theta in (0,1):   
         theta = (theta / 4 )* np.pi
-        for sigma in (1, 3):  #Sigma with 1 and 5
-            for lamda in np.arange(0, np.pi, np.pi / 4):   #Range of wavelengths
-                for gamma in (0.05, 0.5):   #Gamma values of 0.05 and 0.5
-                    gabor_label = 'Gabor' + str(num)  #Label Gabor columns as Gabor1, Gabor2, etc.
+        for sigma in (1, 3):  
+            for lamda in np.arange(0, np.pi, np.pi / 4):   
+                for gamma in (0.05, 0.5):  
+                    gabor_label = 'Gabor' + str(num)  
                     psi=0
                     ksize=9
                     kernel = cv2.getGaborKernel((ksize, ksize), sigma, theta, lamda, gamma, psi, ktype=cv2.CV_32F)    
                     kernels.append(kernel)
-                    #Now filter the image and add values to a new column 
+                    #Now filter the image
                     fimg = cv2.filter2D(img2, cv2.CV_8UC3, kernel)
                     #plt.imshow(kernel)
                     #plt.show()
@@ -58,7 +58,7 @@ for image in os.listdir(img_path):  #iterate through each file
                     num += 1  #Increment for gabor column label
                     
     ########################################
-    #Gerate OTHER FEATURES and add them to the data frame
+    #Gerate features
                     
     #CANNY EDGE
     
@@ -170,7 +170,7 @@ for mask in os.listdir(mask_path):
     df2['Mask_Name'] = mask 
     mask_dataset = mask_dataset.append(df2)
 
-dataset = pd.concat([image_dataset, mask_dataset], axis=1)    #Concatenate both image and mask datasets
+dataset = pd.concat([image_dataset, mask_dataset], axis=1)   
 
 dataset.to_csv("D:/PENTRU LICENTA/pt textura/GaborCr.csv")
 
@@ -188,7 +188,6 @@ model = RandomForestClassifier(n_estimators = 100, random_state = 42)
 model.fit(X_train, y_train)
 
 from sklearn import metrics
-#First test prediction on the training data itself. Should be good. 
 prediction_test_train = model.predict(X_train)
 print(prediction_test_train)
 prediction_test = model.predict(X_test)
@@ -198,17 +197,11 @@ print ("Accuracy = ", metrics.accuracy_score(y_train,prediction_test_train ))
 
 
 importances = list(model.feature_importances_)
-#Let us print them into a nice format.
 feature_list = list(X.columns)
 feature_imp = pd.Series(model.feature_importances_,index=feature_list).sort_values(ascending=False)
 print(feature_imp)
 
-
-
-
-
-
-##Save the trained model as pickle string to disk for future use
+##Save the trained model as pickle 
 model_name = "C:/Users/Iulia/OneDrive - Technical University of Cluj-Napoca/Desktop/codes/NEW TRY/RFCrmodel_final"
 pickle.dump(model, open(model_name, 'wb'))
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score

@@ -3,30 +3,27 @@ import pandas as pd
 import cv2
 import matplotlib.pyplot as plt
 
-
- 
 def feature_extraction(img):
     df = pd.DataFrame()
-#All features generated must match the way features are generated for TRAINING.
-#Feature1 is our original image pixels
+
+#Feature1=org pixel values
     img2 = img.reshape(-1)
     df['Original Image'] = img2
 
-#Generate Gabor features
     # Gabor features(32)
-    num = 1  #To count numbers up in order to give Gabor features a lable in the data frame
+    num = 1 
     kernels = []
-    for theta in (0,1):   #Define number of thetas
+    for theta in (0,1):   
         theta = (theta / 4 )* np.pi
-        for sigma in (1, 3):  #Sigma with 1 and 5
-            for lamda in np.arange(0, np.pi, np.pi / 4):   #Range of wavelengths
-                for gamma in (0.05, 0.5):   #Gamma values of 0.05 and 0.5
-                    gabor_label = 'Gabor' + str(num)  #Label Gabor columns as Gabor1, Gabor2, etc.
+        for sigma in (1, 3): 
+            for lamda in np.arange(0, np.pi, np.pi / 4):   
+                for gamma in (0.05, 0.5):  
+                    gabor_label = 'Gabor' + str(num)  
                     psi=0
                     ksize=9
                     kernel = cv2.getGaborKernel((ksize, ksize), sigma, theta, lamda, gamma, psi, ktype=cv2.CV_32F)    
                     kernels.append(kernel)
-                    #Now filter the image and add values to a new column 
+                    #filter the image and add values to a new column 
                     fimg = cv2.filter2D(img2, cv2.CV_8UC3, kernel)
                     plt.imshow(fimg.reshape(img.shape))
                     plt.suptitle("Gabor filter with: "+"theta: "+str(theta)+"; sigma: "+str(sigma)+";\n lambda: "+str(lamda))
@@ -132,26 +129,24 @@ def feature_extraction(img):
  
 def feature_extraction1(img):
     df1 = pd.DataFrame()
-#All features generated must match the way features are generated for TRAINING.
-#Feature1 is our original image pixels
+
     img2 = img.reshape(-1)
     df1['Original Image'] = img2
 
-#Generate Gabor features
-    # Gabor features(32)
-    num = 1  #To count numbers up in order to give Gabor features a lable in the data frame
+
+    num = 1  
     kernels = []
-    for theta in (0,1):   #Define number of thetas
+    for theta in (0,1):   
         theta = (theta / 4 )* np.pi
-        for sigma in (1, 3):  #Sigma with 1 and 5
+        for sigma in (1, 3): 
             for lamda in np.arange(0, np.pi, np.pi / 4):   #Range of wavelengths
-                for gamma in (0.05, 0.5):   #Gamma values of 0.05 and 0.5
-                    gabor_label = 'Gabor' + str(num)  #Label Gabor columns as Gabor1, Gabor2, etc.
+                for gamma in (0.05, 0.5):  
+                    gabor_label = 'Gabor' + str(num)  
                     psi=0
                     ksize=9
                     kernel = cv2.getGaborKernel((ksize, ksize), sigma, theta, lamda, gamma, psi, ktype=cv2.CV_32F)    
                     kernels.append(kernel)
-                    #Now filter the image and add values to a new column 
+                    
                     fimg = cv2.filter2D(img2, cv2.CV_8UC3, kernel)
                     plt.imshow(fimg.reshape(img.shape))
                     plt.suptitle("Gabor filter with: "+"theta: "+str(theta)+"; sigma: "+str(sigma)+";\n lambda: "+str(lamda))
@@ -271,7 +266,7 @@ loaded_model1 = pickle.load(open(filename1, 'rb'))
 path = "D:/PENTRU LICENTA/SEGMENTATION/images/TRAINING/train/*.jpg"
 classid=0
 for file in glob.glob(path):
-    print(file)     #just stop here to see all file names printed
+    print(file)   
     img0= cv2.imread(file)
     img = cv2.cvtColor(img0,cv2.COLOR_BGR2GRAY)
     #Call the feature extraction function.

@@ -12,7 +12,7 @@ img_path = "D:/PENTRU LICENTA/SEGMENTATION/images/TRAINING/train/"
 for image in os.listdir(img_path):  #iterate through each file 
     print(image)
     
-    df = pd.DataFrame()  #Temporary data frame to capture information for each loop.
+    df = pd.DataFrame() 
     input_img = cv2.imread(img_path + image)  #Read images
     #Check if the input image is RGB or grey and convert to grey if RGB
     if input_img.ndim == 3 and input_img.shape[-1] == 3:
@@ -24,19 +24,19 @@ for image in os.listdir(img_path):  #iterate through each file
         df['Image_Name'] = image 
         
     # Gabor features(32)
-    num = 1  #To count numbers up in order to give Gabor features a lable in the data frame
+    num = 1 
     kernels = []
-    for theta in (0,1):   #Define number of thetas
+    for theta in (0,1):
         theta = (theta / 4 )* np.pi
-        for sigma in (1, 3):  #Sigma with 1 and 5
-            for lamda in np.arange(0, np.pi, np.pi / 4):   #Range of wavelengths
-                for gamma in (0.05, 0.5):   #Gamma values of 0.05 and 0.5
-                    gabor_label = 'Gabor' + str(num)  #Label Gabor columns as Gabor1, Gabor2, etc.
+        for sigma in (1, 3):  
+            for lamda in np.arange(0, np.pi, np.pi / 4):  
+                for gamma in (0.05, 0.5):  
+                    gabor_label = 'Gabor' + str(num) 
                     psi=0
                     ksize=9
                     kernel = cv2.getGaborKernel((ksize, ksize), sigma, theta, lamda, gamma, psi, ktype=cv2.CV_32F)    
                     kernels.append(kernel)
-                    #Now filter the image and add values to a new column 
+                    #Now filter 
                     fimg = cv2.filter2D(img2, cv2.CV_8UC3, kernel)
                     #plt.imshow(kernel)
                     #plt.show()
@@ -46,8 +46,7 @@ for image in os.listdir(img_path):  #iterate through each file
                     num += 1  #Increment for gabor column label
                     
     ########################################
-    #Gerate OTHER FEATURES and add them to the data frame
-                    
+      
     #CANNY EDGE
     edges = cv2.Canny(img, 0.66*np.mean(img),1.33*np.mean(img))   #Image, min and max values
     plt.imshow(edges,cmap='gray')
@@ -173,7 +172,7 @@ from sklearn import metrics
 prediction_test = model.predict(X_test)
 print ("Accuracy = ", metrics.accuracy_score(y_test, prediction_test))
 
-##Save the trained model as pickle string to disk for future use
+##Save the trained model as pickle 
 model_name = "C:/Users/Iulia/OneDrive - Technical University of Cluj-Napoca/Desktop/codes/NEW TRY/RFmodel_final"
 pickle.dump(model, open(model_name, 'wb'))
 
@@ -183,8 +182,3 @@ accc=loaded_model.predict(X_test)
 accc1=loaded_model.predict(X_train)
 print("Accuracy on test set: ",metrics.accuracy_score(y_test,accc))
 print("Accuracy on training set: ",metrics.accuracy_score(y_train,accc1))
-
-
-
-    
-    

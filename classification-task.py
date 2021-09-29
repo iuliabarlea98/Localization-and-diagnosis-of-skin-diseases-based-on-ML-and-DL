@@ -51,6 +51,7 @@ plt.title('Age distribution')
 plt.show()
 
 # Data distribution visualization
+#pie plots
 fig = plt.figure(figsize=(20,8))
 
 ax1 = fig.add_subplot(141)
@@ -112,7 +113,7 @@ for n_axs, (type_name, type_rows) in zip(m_axs,
 
 #Convert dataframe column of images into numpy array
 X = np.asarray(skin_df['image'].tolist())
-X = X/255.  # Scale values to 0-1. You can also used standardscaler or other scaling methods.
+X = X/255.  # Scale values to 0-1
 Y=skin_df['label']  #Assign label values to Y
 Y_cat = to_categorical(Y, num_classes=7) #Convert to categorical as this is a multiclass classification
 #Split to training and testing
